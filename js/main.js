@@ -1,22 +1,20 @@
-const userSurname =  //получите элемент input с фамилией(*)
-const userName =  //получите элемент input с именем(*)
 
-const goodsElements = //получите элементы checkbox с товарами goods(*)
-const countElements =  //получите элементы input с кол-вом(*)
+const userSurname =  document.querySelector('[name="surname"]');
+const userName = document.querySelector('[name="name"]');
 
-const btn = //получите элемент button(*)
-const resultElem =//получите элемент span для итоговой суммы
+const goodsElements = document.querySelectorAll('[name="goods"]'); //получите элементы checkbox с товарами goods(*)
+const countElements = document.querySelectorAll('[type="number"]');
 
-//создайте переменную для хранения итоговой суммы (*)
-    let
+const btn = document.querySelector('.btn');
+const resultElem =document.querySelector('.sum');
 
-//этот объект нужен для хранения количества каждого товара
-//либо, вы можете создать переменные/массив для хранения значений
+    let sum = null;
+
 const countGoods = {
-    "expresso": 0,
+    "espresso": 0,
     "americano": 0,
     "latte": 0,
-    "capuchino": 0,
+    "cappuccino": 0,
     "chocolate_muffin": 0,
     "blueberry_muffin": 0,
     "apple_tart": 0
@@ -25,33 +23,63 @@ const countGoods = {
 //этот объект нужен для хранения цены каждого товара
 //т.е. если товар выбран, записываем его цену, если не выбран - записываем 0
 //либо, вы можете создать переменные/массив для хранения значений
-const choicePriceGoods = {
-    "expresso": 0,
-    "americano": 0,
-    "latte": 0,
-    "capuchino": 0,
-    "chocolate_muffin": 0,
-    "blueberry_muffin": 0,
-    "apple_tart": 0
+// const choicePriceGoods = {
+//     "espresso": 0,
+//     "americano": 0,
+//     "latte": 0,
+//     "cappuccino": 0,
+//     "chocolate_muffin": 0,
+//     "blueberry_muffin": 0,
+//     "apple_tart": 0
+// }
+
+function summary(){
+    goodsElements.forEach(element =>{
+        sum += countGoods[element.dataset.goods]*element.value;
+    })
+    resultElem.textContent = sum;
+    sum = 0;
 }
 
-//создайте функцию, которая будет считать итоговую сумму, подумайте над формулой.
-function
-
-
-//для каждого элемента input с кол-вом нужно повесить событие на изменение change,
-//по которому в объекте должны меняться значения на значение в input
 countElements.forEach(elem => {
-
+    elem.addEventListener("change", function (){
+        goodsElements.forEach(good => {
+            if (elem.value > 0) {
+                countGoods[elem.id] = elem.value;
+                if (good.dataset.goods === elem.id) {
+                    good.checked = true;
+                }
+            } else {
+                countGoods[elem.id] = 0;
+                good.checked = false;
+                elem.value = 0;
+            }
+        })
+        summary();
+    })
 })
 
-//для каждого элемента checkbox нужно повесить событие на изменение change,
-//по которому в объекте должны меняться значение на цену, если чекбокс выбран
-//или обратно на 0, если чекбокс не выбран
 goodsElements.forEach(product => {
-
+    product.addEventListener("change", function (){
+        countElements.forEach(countElement => {
+            if (countElement.id === product.dataset.goods) {
+                if (product.checked) {
+                    countElement.value = 1;
+                    countGoods[countElement.id] = 1;
+                }
+                else {
+                    countElement.value = 0;
+                    countGoods[countElement.id] = 0;
+                }
+            }
+        });
+        summary();
+    })
 });
 
-//по клику на кнопку должен появиться alert с текстом
-//(*)для выбравших способ 1 или 2 именно внутри данного события будет происходить подсчет итоговой суммы,
-//вам нужно перебрать все элементы checkbox и input в цикле
+btn.addEventListener("click", function (){
+    userSurname.value === "" ? alert("Введите фамилию!") :
+        userName.value === "" ? alert("Введите имя!") :
+            resultElem.textContent < 1 ? alert("Выберете товар!") :
+                alert(`Заказчик: ${userSurname.value} ${userName.value}\nИтого: ${resultElem.textContent}`);
+})
